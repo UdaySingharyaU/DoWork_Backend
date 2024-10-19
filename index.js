@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors'; // Import CORS
 import configConnnection from './config/connection.config.js';
 import xss from 'xss-clean';
 import cookieParser from 'cookie-parser';
@@ -12,12 +13,13 @@ import workRoutes from './routes/workPost.routes.js';
 import messageRoutes from './routes/reveiw.route.js';
 import reveiwRoutes from './routes/reveiw.route.js';
 
-
-
 const app = express();
 dotenv.config();
 
-//Parse json request body
+// CORS Policy (Allow all origins)
+app.use(cors());
+
+// Parse JSON request body
 app.use(express.json());
 
 // Sanitize data
@@ -27,22 +29,22 @@ app.use(mongoSanitize());
 // Parsing cookie
 app.use(cookieParser());
 
-//routes
+// Routes
 app.get('/', (req, res) => {
-    res.status(200).send('Welcome to the API!');
-  });
-app.use('/api/v1/staging/user',userRoutes);
-app.use('/api/v1/staging/service',serviceRoutes);
-app.use('/api/v1/staging/post',workRoutes);
-app.use('/api/v1/staging/message',messageRoutes);
-app.use('/api/v1/staging/reveiw',reveiwRoutes);
+  res.status(200).send('Welcome to the API!');
+});
+app.use('/api/v1/staging/user', userRoutes);
+app.use('/api/v1/staging/service', serviceRoutes);
+app.use('/api/v1/staging/post', workRoutes);
+app.use('/api/v1/staging/message', messageRoutes);
+app.use('/api/v1/staging/reveiw', reveiwRoutes);
 
-
-
-//connection with DB
+// DB Connection
 configConnnection.connect();
-app.listen(process.env.PORT ,()=>{
-    console.log(`Connection extablished at PORT ${process.env.PORT}`)
-})
 
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Connection established at PORT ${PORT}`);
+});
 
+export default app;
