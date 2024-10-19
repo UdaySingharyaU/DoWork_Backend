@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
     },
     aadharCardNumber: {
         type: String,
-        unique:true
+        // unique:true
     },
     description: {
         type: String
