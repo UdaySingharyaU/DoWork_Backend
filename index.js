@@ -28,6 +28,9 @@ app.use(mongoSanitize());
 app.use(cookieParser());
 
 //routes
+app.get('/', (req, res) => {
+    res.status(200).send('Welcome to the API!');
+  });
 app.use('/api/v1/staging/user',userRoutes);
 app.use('/api/v1/staging/service',serviceRoutes);
 app.use('/api/v1/staging/post',workRoutes);

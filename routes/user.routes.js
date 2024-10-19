@@ -8,6 +8,7 @@ import authMiddleware from "../middleware/auth.middleware.js";
 
 
 //routes
+
 router.post('/signUp',userController.signUp);
 
 router.post('/login',userController.login);
