@@ -1,82 +1,73 @@
 import cv2
 import face_recognition
 import time
+import sys  # For better error reporting
 
 # Step 1: Capture image from webcam after 3 seconds
 def capture_image():
-    video_capture = cv2.VideoCapture(0) 
+    try:
+        video_capture = cv2.VideoCapture(0)
 
-    if not video_capture.isOpened():
-        print("Error: Could not open webcam.")
-        return None
-    print("Capturing image in 3 seconds...")
+        if not video_capture.isOpened():
+            print("Error: Could not open webcam.")
+            sys.exit(1)  # Exit with non-zero status
 
-    time.sleep(1)
-    start_time = time.time()
+        print("Capturing image in 3 seconds...")
+        time.sleep(3)
 
-    while True:
         ret, frame = video_capture.read()
         if not ret:
             print("Failed to capture frame. Exiting.")
-            break
+            sys.exit(1)  # Exit with error code
 
-        # Display the frame
-        cv2.imshow('Video', frame)
+        image_path = 'captured_image.jpg'
+        cv2.imwrite(image_path, frame)
+        print(f"Image saved to {image_path}")
 
-        # Break and capture image after 3 seconds
-        if time.time() - start_time >= 3:
-            image_path = 'captured_image.jpg'
-            cv2.imwrite(image_path, frame)
-            print(f"Image saved to {image_path}")
-            break
+        video_capture.release()
+        cv2.destroyAllWindows()
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        return image_path
+    except Exception as e:
+        print(f"An error occurred during capture: {e}")
+        sys.exit(1)  # Exit with non-zero status
 
-    video_capture.release()
-    cv2.destroyAllWindows()
-
-    return image_path
-
-# Step 2: Perform face recognition on captured image
 def recognize_face(captured_image, known_image_path):
     try:
-        
-        # Load the known image
+        # Load the known image and encode
         known_image = face_recognition.load_image_file(known_image_path)
         known_face_encodings = face_recognition.face_encodings(known_image)
-        if len(known_face_encodings) == 0:
+
+        if not known_face_encodings:
             print("No faces found in the known image.")
-            return
+            sys.exit(1)
+
         known_face_encoding = known_face_encodings[0]
-        # Load the captured image
+
+        # Load the captured image and encode
         unknown_image = face_recognition.load_image_file(captured_image)
         unknown_face_encodings = face_recognition.face_encodings(unknown_image)
-        
-        if len(unknown_face_encodings) == 0:
+
+        if not unknown_face_encodings:
             print("No faces found in the captured image.")
-            return
-        
+            sys.exit(1)
+
         # Compare faces
         for unknown_face_encoding in unknown_face_encodings:
             results = face_recognition.compare_faces([known_face_encoding], unknown_face_encoding)
-
             if results[0]:
                 print("Face matches! Return value: True")
             else:
                 print("Face does not match! Return value: False")
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred during recognition: {e}")
+        sys.exit(1)  # Exit with non-zero status
 
-# Step 3: Main function to capture and recognize face
-if __name__ == "__main__": 
+# Main function
+if __name__ == "__main__":
+    image1 = capture_image()
+    image2 = capture_image()
 
-    # Capture two images from the webcam
-    captured_image_path1 = capture_image()
-    print("captureImage",type(capture_image))
-    captured_image_path2 = capture_image()
-
-    if captured_image_path1 and captured_image_path2:
-        # Perform face recognition
-        recognize_face(captured_image_path1, captured_image_path2)
+    if image1 and image2:
+        recognize_face(image1, image2)
