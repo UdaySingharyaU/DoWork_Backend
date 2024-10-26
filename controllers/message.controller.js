@@ -5,6 +5,7 @@ import User from "../models/user.model.js";
 const messageController = {
     _sendMessageFromuUser: async (req, res) => {
         try {
+            console.log("dsjhkj")
             const { text } = req.body;
             const receiverUserId = req.params.receiverId;
 

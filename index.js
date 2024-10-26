@@ -10,7 +10,7 @@ import mongoSanitize from 'express-mongo-sanitize';
 import userRoutes from './routes/user.routes.js';
 import serviceRoutes from './routes/service.route.js';
 import workRoutes from './routes/workPost.routes.js';
-import messageRoutes from './routes/reveiw.route.js';
+import messageRoutes from './routes/message.routes.js';
 import reveiwRoutes from './routes/reveiw.route.js';
 
 const app = express();
