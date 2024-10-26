@@ -16,6 +16,9 @@ router.post('/postByFindWorker',authMiddleware.auth,workPost.postByFindWorker);
 
 router.get('/getAllPost',authMiddleware.auth,workPost.getAllPost);
 
+router.get('/getPostById/:id',authMiddleware.auth,workPost.getPostById);
+
+
 router.patch('/changeStatusOfAvalabilityByWorker/:id',authMiddleware.auth,workPost.changeStatusOfAvalabilityByWorker);
 
 export default router;
