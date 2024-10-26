@@ -210,78 +210,78 @@ const userController = {
         }
     },
 
-    getUserById:async(req,res)=>{
-        try{
-            if(!mongoose.Types.ObjectId.isValid(req.params.id)){
+    getUserById: async (req, res) => {
+        try {
+            if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
                 return res.status(400).json({
-                    status:false,
-                    message:"Invalid Id",
-                    data:{}
+                    status: false,
+                    message: "Invalid Id",
+                    data: {}
                 })
             }
             const user = await User.findById(req.params.id);
-            if(!user){
+            if (!user) {
                 return res.status(404).json({
-                    status:false,
-                    message:"User Does Not Exist",
-                    data:{}
+                    status: false,
+                    message: "User Does Not Exist",
+                    data: {}
                 })
             }
             return res.status(200).json({
-                status:true,
-                message:"User Reterived  Successfully",
-                data:user
+                status: true,
+                message: "User Reterived  Successfully",
+                data: user
             })
-        }catch(err){
+        } catch (err) {
             return res.status(err.statusCode || 500).json({
-                status:false,
-                error:err.message
+                status: false,
+                error: err.message
             })
         }
     },
 
-    getUserByToken:async(req,res)=>{
-        try{
+    getUserByToken: async (req, res) => {
+        try {
             const user = await User.findById(req.currentUser.id);
-            if(!user){
+            if (!user) {
                 return res.status(404).json({
-                    status:false,
-                    message:"User Does Not Exist",
-                    data:{}
+                    status: false,
+                    message: "User Does Not Exist",
+                    data: {}
                 })
             }
             return res.status(200).json({
-                status:true,
-                message:"User Reterived  Successfully",
-                data:user
+                status: true,
+                message: "User Reterived  Successfully",
+                data: user
             })
-        }catch(err){
+        } catch (err) {
             return res.status(err.statusCode || 500).json({
-                status:false,
-                error:err.message
+                status: false,
+                error: err.message
             })
         }
     },
 
-    getAllUsers:async(req,res)=>{
-        try{
+    getAllUsers: async (req, res) => {
+        try {
             const user = await User.find();
-            if(user.length==0){
+            if (user.length == 0) {
                 return res.status(404).json({
-                    status:false,
-                    message:"User Does Not Exist",
-                    data:{}
+                    status: false,
+                    message: "User Does Not Exist",
+                    data: {}
                 })
             }
             return res.status(200).json({
-                status:true,
-                message:"User Reterived  Successfully",
-                data:user
+                status: true,
+                message: "User Reterived  Successfully",
+                data: user
             })
-        }catch(err){
+        } catch (err) {
             return res.status(err.statusCode || 500).json({
-                status:false,
-                error:err.message
+                status: false,
+                error: err.message
             })
         }
     },
@@ -381,10 +381,10 @@ const userController = {
     completeProfileByWorkFinder: async (req, res) => {
         try {
             const existUser = await User.findById(req.currentUser.id);
-            if(existUser.isProfileCompleted == true){
+            if (existUser.isProfileCompleted == true) {
                 return res.status(400).json({
-                    status:false,
-                    message:"You are Already Completed Your Profile! You Can Update your Profile "
+                    status: false,
+                    message: "You are Already Completed Your Profile! You Can Update your Profile "
                 })
             }
             const { serviceName, categories, ...updateData } = req.body;
@@ -435,14 +435,14 @@ const userController = {
     completeProfileByFindWorker: async (req, res) => {
         try {
             const existUser = await User.findById(req.currentUser.id);
-            if(existUser.isProfileCompleted == true){
+            if (existUser.isProfileCompleted == true) {
                 return res.status(400).json({
-                    status:false,
-                    message:"You are Already Completed Your Profile! You Can Update your Profile "
+                    status: false,
+                    message: "You are Already Completed Your Profile! You Can Update your Profile "
                 })
             }
-console.log(existUser)
-            const {...updateData } = req.body;
+            console.log(existUser)
+            const { ...updateData } = req.body;
 
             // Update user data
             const updatedUser = await User.findByIdAndUpdate(
@@ -492,9 +492,9 @@ console.log(existUser)
     },
 
 
-    updateProfileById:async(req,res)=>{
-        const {...updateData}=req.body;
-        const updatedUser = await User.findByIdAndUpdate(req.currentUser.id,updateData,{new:true});
+    updateProfileById: async (req, res) => {
+        const { ...updateData } = req.body;
+        const updatedUser = await User.findByIdAndUpdate(req.currentUser.id, updateData, { new: true });
         if (!updatedUser) {
             return res.status(404).json({
                 status: false,
@@ -502,8 +502,8 @@ console.log(existUser)
             })
         }
         return res.status(200).json({
-            status:true,
-            message:"User Updated Successfully"
+            status: true,
+            message: "User Updated Successfully"
         })
     },
 
@@ -511,10 +511,10 @@ console.log(existUser)
     findWorkByWorker: async (req, res) => {
         try {
             const existWorkFinder = await User.findById({ _id: req.currentUser.id });
-            if(existWorkFinder.role=='FINDWORKER'){
+            if (existWorkFinder.role == 'FINDWORKER') {
                 return res.status(400).json({
-                    status:false,
-                    message:`Your Role is ${existWorkFinder.role} ,So you can not find Worker`
+                    status: false,
+                    message: `Your Role is ${existWorkFinder.role} ,So you can not find Worker`
                 })
             }
             const existService = await Service.findOne({ _id: existWorkFinder.service })
@@ -539,7 +539,7 @@ console.log(existUser)
             return res.status(200).json({
                 status: true,
                 message: "All Upcoming Post Get Successfuly ",
-                date:workPosts
+                date: workPosts
             })
         } catch (error) {
             return res.status(error.statusCode || 500).json({
@@ -553,43 +553,43 @@ console.log(existUser)
     findWorker: async (req, res) => {
         try {
             const existWorkProvider = await User.findById({ _id: req.currentUser.id });
-    
+
             if (existWorkProvider.role !== 'FINDWORKER') {
                 return res.status(400).json({
                     status: false,
                     message: "Only FINDWORKER can find WORKERS"
                 });
             }
-    
+
             const existService = await allServices.serviceByname(req.query.service);
-    
+
             if (!existService) {
                 return res.status(404).json({
                     status: false,
                     message: `${req.query.service} service Not Exist`
                 });
             }
-    
+
             // Create dynamic filter
-            const filter = { 
+            const filter = {
                 service: req.query.service,
                 status: 'AVAILABLE'
             };
-    
+
             // If category is provided in query, add it to filter
             if (req.query.category) {
                 filter.category = req.query.category;
             }
-    
+
             const workPosts = await WorkPost.find(filter);
-    
+
             if (workPosts.length === 0) {
                 return res.status(404).json({
                     status: false,
                     message: `${req.query.service} service and ${req.query.category || 'any'} category post not exist`
                 });
             }
-    
+
             return res.status(200).json({
                 status: true,
                 message: "All Available Workers Get Successfully",
@@ -602,15 +602,22 @@ console.log(existUser)
             });
         }
     },
-    
+
 
 
     runFaceRecognition: async (req, res) => {
-        const result = await executePython('recognize_face.py', []);
-        return res.status(200).json({
-            status: true,
-            message: `Python Code ${result}`
-        })
+        try {
+            const result = await executePython('recognize_face.py', []);
+            return res.status(200).json({
+                status: true,
+                message: `Python Code ${result}`
+            })
+        } catch (err) {
+            return res.status(error.statusCode || 500).json({
+                status: false,
+                error: error.message
+            });
+        }
     }
 }
 

@@ -159,6 +159,22 @@ const serviceController = {
         }
     },
 
+    getAllPostByToken:async(req,res)=>{
+        try {
+            console.log("req.curectUser",req.currentUser);
+            const post = await WorkPost.find({user:req.currentUser.id}).populate('user');
+            return res.status(200).json({
+                status: true,
+                data: post
+            });
+        } catch (error) {
+            return res.status(error.statusCode || 500).json({
+                status: false,
+                error: error.message
+            });
+        }
+    },
+
     getPostById:async(req,res)=>{
         try {
             const post = await WorkPost.findById(req.params.id).populate('user');
