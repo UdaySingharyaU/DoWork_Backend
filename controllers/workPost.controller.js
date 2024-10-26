@@ -82,7 +82,7 @@ const serviceController = {
             // User retrieval
             const existUser = await User.findById(req.currentUser.id);
             console.log(existUser.role)
-            if (existUser.role !== 'FINDWORK') {
+            if (existUser.role == 'FINDWORK') {
                 return res.status(400).json({
                     status: false,
                     message: `Only FINDWORKER can Post For Find Worker`

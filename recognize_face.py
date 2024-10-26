@@ -73,9 +73,9 @@ def recognize_face(captured_image, known_image_path):
 if __name__ == "__main__": 
 
     # Capture two images from the webcam
-    captured_image_path1 = 'modi.jpeg'
+    captured_image_path1 = capture_image()
     print("captureImage",type(capture_image))
-    captured_image_path2 = 'known_user.jpeg'
+    captured_image_path2 = capture_image()
 
     if captured_image_path1 and captured_image_path2:
         # Perform face recognition
