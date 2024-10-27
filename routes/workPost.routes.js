@@ -14,7 +14,7 @@ router.post('/postByWorker',authMiddleware.auth,workPost.postWorkByWorker);
 
 router.post('/postByFindWorker',authMiddleware.auth,workPost.postByFindWorker);
 
-router.get('/getAllPost',authMiddleware.auth,workPost.getAllPost);
+router.get('/getAllPost',workPost.getAllPost);
 
 router.get('/getPostById/:id',authMiddleware.auth,workPost.getPostById);
 
