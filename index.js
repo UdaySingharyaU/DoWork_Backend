@@ -13,6 +13,8 @@ import workRoutes from './routes/workPost.routes.js';
 import messageRoutes from './routes/message.routes.js';
 import reveiwRoutes from './routes/reveiw.route.js';
 
+import uploadRoutes from './routes/upload.route.js';
+
 const app = express();
 dotenv.config();
 
@@ -38,6 +40,7 @@ app.use('/api/v1/staging/service', serviceRoutes);
 app.use('/api/v1/staging/post', workRoutes);
 app.use('/api/v1/staging/message', messageRoutes);
 app.use('/api/v1/staging/reveiw', reveiwRoutes);
+app.use('/api/v1/staging', uploadRoutes);
 
 // DB Connection
 configConnnection.connect();
