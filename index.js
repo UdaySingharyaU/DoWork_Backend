@@ -42,7 +42,7 @@ app.use('/api/v1/staging/reveiw', reveiwRoutes);
 // DB Connection
 configConnnection.connect();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.CLIENT_URI || 5173 || 3000;
 app.listen(PORT, () => {
   console.log(`Connection established at PORT ${PORT}`);
 });
