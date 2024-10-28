@@ -50,6 +50,7 @@ const categoryController = {
 
     getAllCategory: async (req, res) => {
         try {
+            console.log("sdhfkj")
             const category = await Category.find();
             return res.status(200).json({
                 status: true,

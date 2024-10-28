@@ -14,6 +14,7 @@ import messageRoutes from './routes/message.routes.js';
 import reveiwRoutes from './routes/reveiw.route.js';
 import uploadRoutes from './routes/upload.route.js';
 import notificationRoutes from './routes/notification.route.js';
+import categoryRoutes from './routes/category.routes.js';
 
 
 const app = express();
@@ -34,10 +35,11 @@ app.use(cookieParser());
 
 // Routes
 app.get('/', (req, res) => {
-  res.status(200).send('Welcome to the API!');
+  res.status(200).send('Welcome to the DOWORK!');
 });
 app.use('/api/v1/staging/user', userRoutes);
 app.use('/api/v1/staging/service', serviceRoutes);
+app.use('/api/v1/staging/category', categoryRoutes);
 app.use('/api/v1/staging/post', workRoutes);
 app.use('/api/v1/staging/message', messageRoutes);
 app.use('/api/v1/staging/reveiw', reveiwRoutes);
