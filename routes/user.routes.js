@@ -19,7 +19,7 @@ router.post('/verifyOtp',userController.verifyOtp);
 
 router.get('/getUserById/:id',authMiddleware.auth,userController.getUserById);
 
-router.get('/getUserByToken/:id',authMiddleware.auth,userController.getUserByToken);
+router.get('/getUserByToken',authMiddleware.auth,userController.getUserByToken);
 
 router.get('/getAllUsers',authMiddleware.auth,authMiddleware.checkAdminOrNot,userController.getAllUsers);
 
