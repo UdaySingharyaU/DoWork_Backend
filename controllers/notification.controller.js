@@ -4,7 +4,7 @@ import Notification from "../models/notification.model.js";
 const notificationController = {
     allNotification : async(req,res)=>{
         try{
-            const notifications = await Notification.find({to:req.currentUser.id});
+            const notifications = await Notification.find({to:req.currentUser.id}).populate('to').populate('from');
             return res.status(200).json({
                 status:true,
                 message:"All Notifications get Successfully",
