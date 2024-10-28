@@ -46,6 +46,21 @@ const categoryController = {
                 error: error.message
             })
         }
+    },
+
+    getAllCategory: async (req, res) => {
+        try {
+            const category = await Category.find();
+            return res.status(200).json({
+                status: true,
+                message: "Category retrived Successfully",
+                data: category
+            })
+        } catch (err) {
+            return res.status(err.statusCode || 500).json({
+                error: err.message || "Internal Server Error"
+            })
+        }
     }
 }
 

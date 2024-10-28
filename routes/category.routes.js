@@ -14,7 +14,8 @@ router.post('/addCategory',authMiddleware.auth,categoryController.addCategory);
 
 router.post('/getCategoryById/:id',categoryController.getCategoryById);
 
- 
+router.get('/getAllCategory',authMiddleware.auth,categoryController.getAllCategory);
+
 
 
 
