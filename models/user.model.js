@@ -81,6 +81,10 @@ const userSchema = new mongoose.Schema({
     isProfileCompleted:{
         type:Boolean,
         default:false
+    },
+    location: {
+        latitude: Number,
+        longitude: Number
     }
 },
     {

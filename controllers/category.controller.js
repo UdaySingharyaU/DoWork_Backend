@@ -1,17 +1,25 @@
 import Category from "../models/categorymodel.js";
 import categoryService from "../service/category.service.js";
-
+import User from "../models/user.model.js";
 
 const categoryController = {
     addCategory: async (req, res) => {
         try {
-            const response = await  categoryService.addCategory(req.body.name,req.body.description);
+            const user = await User.findById({_id:req.currentUser.id});
+            console.log(req.currentUser.id)
+            if (!user || user.role!='ADMIN') {
+                return res.status(400).json({
+                    status: false,
+                    message: "You Are Not An Admin! Only Admin can add New Category",
+                    data: {}
+                })
+            }
+            const response = await  categoryService.addCategory(req.body.name,req.body.description,req.body.service);
             return res.status(201).json({
                 status:true,
-                messsage:"Category Created Successfully",
                 date:response
             })
-        } catch (err) {
+        } catch (error) {
             return res.status(error.statusCode || '500').json({
                 status: false,
                 error: error.message

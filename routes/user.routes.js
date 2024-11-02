@@ -13,6 +13,9 @@ router.post('/signUp',userController.signUp);
 
 router.post('/login',userController.login);
 
+router.post('/logout',userController.logout);
+
+
 router.post('/sendOtp',userController.sendOtp);
 
 router.post('/verifyOtp',userController.verifyOtp);
@@ -35,10 +38,9 @@ router.get('/findWorkByWorker',authMiddleware.auth,userController.findWorkByWork
 
 router.get('/findWorker',authMiddleware.auth,userController.findWorker)
 
+router.post('/getUserAddress',userController.getUserAddress)
 
-
-
-
+router.post('/getDistanceBetweenTwoPlaces',userController.getDistanceBetweenTwoPlaces);
 
 
 router.get('/runFaceRecognition',userController.runFaceRecognition);

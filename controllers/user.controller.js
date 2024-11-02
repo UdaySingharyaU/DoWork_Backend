@@ -14,7 +14,8 @@ import Category from "../models/categorymodel.js";
 import WorkPost from "../models/workPost.model.js";
 import allServices from "../service/allservices.service.js";
 import mongoose from "mongoose";
-
+import axios from 'axios';
+import { error } from "console";
 
 const executePython = async (script, args = []) => {
     const argument = args.map(arg => arg.toString());
@@ -78,7 +79,7 @@ const createCookieFromToken = (user, mes, statusCode, req, res) => {
 };
 
 
-async function handleUserCreation(req, res, { email, role, password }) {
+async function handleUserCreation(req, res, { email, role, password, location }) {
     if (role !== 'FINDWORKER' && role !== 'FINDWORK' && role !== 'ADMIN') {
         console.log("inner")
         return res.status(400).json({
@@ -98,7 +99,7 @@ async function handleUserCreation(req, res, { email, role, password }) {
     const hasPassword = await bcrypt.hash(password, 10);
     // Create and save the new user
 
-    const newUser = new User({ email, role, password: hasPassword });
+    const newUser = new User({ email, role, password: hasPassword, location });
     console.log("newUser", newUser);
     await newUser.save();
 
@@ -136,12 +137,26 @@ async function handleUserCreation(req, res, { email, role, password }) {
     });
 }
 
+// Haversine formula to calculate distance
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius of the Earth in kilometers
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in kilometers
+}
+
 
 const userController = {
     signUp: async (req, res) => {
         console.log("first")
         console.log('req.body', req.body);
-        const { email, role, password } = req.body;
+        const { email, role, password, location } = req.body;
 
         // Validate input fields
         if (!password || !email) {
@@ -157,12 +172,12 @@ const userController = {
         try {
             const existingUserWithEmail = await User.findOne({ email });
             if (!existingUserWithEmail) {
-                return await handleUserCreation(req, res, { email, role, password });
+                return await handleUserCreation(req, res, { email, role, password, location });
             }
 
             if (existingUserWithEmail && !existingUserWithEmail.isVerified) {
                 await existingUserWithEmail.deleteOne();
-                return await handleUserCreation(req, res, { email, role, password });
+                return await handleUserCreation(req, res, { email, role, password, location });
             }
 
             // Case 3: Existing and verified user
@@ -288,6 +303,7 @@ const userController = {
 
     login: async (req, res) => {
         try {
+            console.log("first")
             const { email, password } = req.body;
             const user = await User.findOne({ email });
             if (user == null) {
@@ -312,6 +328,21 @@ const userController = {
             }
             let mes = "Login Successful"
             createCookieFromToken(user, mes, 200, req, res);
+        } catch (error) {
+            return res.status(error.statusCode || '500').json({
+                status: false,
+                error: error.message
+            })
+        }
+    },
+
+    logout: async (req, res) => {
+        try {
+            res.clearCookie('jwt');
+            return res.status(200).json({
+                status: 'success',
+                message: 'You have successfully logged out',
+            });
         } catch (error) {
             return res.status(error.statusCode || '500').json({
                 status: false,
@@ -465,7 +496,6 @@ const userController = {
         }
     },
 
-
     changeUserActiveStatus: async (req, res) => {
         try {
             const existUser = await User.findById({ _id: req.params.id });
@@ -491,7 +521,6 @@ const userController = {
         }
     },
 
-
     updateProfileById: async (req, res) => {
         const { ...updateData } = req.body;
         const updatedUser = await User.findByIdAndUpdate(req.currentUser.id, updateData, { new: true });
@@ -506,7 +535,6 @@ const userController = {
             message: "User Updated Successfully"
         })
     },
-
 
     findWorkByWorker: async (req, res) => {
         try {
@@ -548,7 +576,6 @@ const userController = {
             });
         }
     },
-
 
     findWorker: async (req, res) => {
         try {
@@ -603,8 +630,62 @@ const userController = {
         }
     },
 
+    getUserAddress: async (req, res) => {
+        try {
+            const { longitude, latitude } = req.body;
+            if (!longitude || !latitude) {
+                return res.status(400).json({
+                    status: false,
+                    message: "Longitude and Latitude both are required"
+                })
+            }
+
+            const formattedLatitude = Math.abs(parseFloat(latitude));
+            const formattedLongitude = Math.abs(parseFloat(longitude));
+
+            const url = `https://maps.gomaps.pro/maps/api/geocode/json?latlng=${formattedLatitude},${formattedLongitude}&key=${process.env.GOOGLE_MAP_API_KEY}`;
+            const response = await axios.get(url);
+            if (response.data.status === 'OK') {
+                const address = response.data.results[0].formatted_address;
+                console.log("address", address);
+                return res.status(200).json({
+                    message: address
+                })
+            } else {
+                throw new Error('Unable to fetch address: ' + response.data.error_message);
+            }
+        } catch (error) {
+            return res.status(error.statusCode || 500).json({
+                status: false,
+                error: error.message
+            });
+        }
+    },
 
 
+    getDistanceBetweenTwoPlaces: async (req, res) => {
+        try {
+            const { latitude1, longitude1, latitude2, longitude2 } = req.body;
+            if (!latitude1 || !longitude1 || !latitude2 || !longitude2) {
+                return res.status(400).json({
+                    message: "Langitudes and Longitudes Are Required"
+                })
+            }
+            const distance = calculateDistance(latitude1, longitude1, latitude2, longitude2);
+            // Generate Google Maps URL
+            const mapUrl = `https://www.google.com/maps/dir/${latitude1},${longitude1}/${latitude2},${longitude2}`;
+
+            return res.json({
+                distance: `${distance.toFixed(2)} km`,
+                mapUrl: mapUrl
+            });
+        } catch (err) {
+            return res.status(error.statusCode || 500).json({
+                status: false,
+                error: error.message
+            });
+        }
+    },
     runFaceRecognition: async (req, res) => {
         try {
             const result = await executePython('recognize_face.py', []);

@@ -16,6 +16,10 @@ const categorySchema = new mongoose.Schema({
     description: {
         type: String,
         default: null
+    },
+    serviceId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Service'
     }
 },
     {
