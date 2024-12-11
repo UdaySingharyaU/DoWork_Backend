@@ -14,8 +14,7 @@ router.post('/addServiceByAdmin',authMiddleware.auth,authMiddleware.checkAdminOr
 
 router.get('/getServiceById/:id',serviceController.getServiceById);
 
-
-router.get('/getAllService',authMiddleware.auth,authMiddleware.checkAdminOrNot,serviceController.getAllService);
+router.get('/getAllService',serviceController.getAllService);
 
 
 

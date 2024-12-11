@@ -30,7 +30,7 @@ const serviceController = {
                 });
             }
             // Check if the user can post for this service
-            if (existUser.service.toString() != existServiceInUserProfile._id.toString()) {
+            if (existUser.service != existServiceInUserProfile._id) {
                 return res.status(400).json({
                     status: false,
                     message: `You can't post work for this service because you've created a ${existServiceInUserProfile.name} service account.`
@@ -147,6 +147,22 @@ const serviceController = {
     getAllPost: async (req, res) => {
         try {
             const post = await WorkPost.find().populate('user');
+            return res.status(200).json({
+                status: true,
+                data: post
+            });
+        } catch (error) {
+            return res.status(error.statusCode || 500).json({
+                status: false,
+                error: error.message
+            });
+        }
+    },
+
+    getAllPostByToken:async(req,res)=>{
+        try {
+            console.log("req.curectUser",req.currentUser);
+            const post = await WorkPost.find({user:req.currentUser.id}).populate('user');
             return res.status(200).json({
                 status: true,
                 data: post

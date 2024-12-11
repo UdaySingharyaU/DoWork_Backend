@@ -41,7 +41,6 @@ const serviceController = {
         }
     },
 
-
     getServiceById: async (req, res) => {
         try {
             if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -76,6 +75,7 @@ const serviceController = {
             return res.status(200).json({
                 status: true,
                 message: "Service retrived Successfully",
+                totalServices:services.length,
                 data: services
             })
         } catch (err) {

@@ -13,13 +13,16 @@ router.post('/signUp',userController.signUp);
 
 router.post('/login',userController.login);
 
+router.post('/logout',userController.logout);
+
+
 router.post('/sendOtp',userController.sendOtp);
 
 router.post('/verifyOtp',userController.verifyOtp);
 
 router.get('/getUserById/:id',authMiddleware.auth,userController.getUserById);
 
-router.get('/getUserByToken/:id',authMiddleware.auth,userController.getUserByToken);
+router.get('/getUserByToken',authMiddleware.auth,userController.getUserByToken);
 
 router.get('/getAllUsers',authMiddleware.auth,authMiddleware.checkAdminOrNot,userController.getAllUsers);
 
@@ -34,6 +37,10 @@ router.patch('/updateProfileById/:id',authMiddleware.auth,userController.updateP
 router.get('/findWorkByWorker',authMiddleware.auth,userController.findWorkByWorker)
 
 router.get('/findWorker',authMiddleware.auth,userController.findWorker)
+
+router.post('/getUserAddress',userController.getUserAddress)
+
+router.post('/getDistanceBetweenTwoPlaces',userController.getDistanceBetweenTwoPlaces);
 
 
 
