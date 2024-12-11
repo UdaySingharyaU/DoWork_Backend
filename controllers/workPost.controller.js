@@ -30,7 +30,7 @@ const serviceController = {
                 });
             }
             // Check if the user can post for this service
-            if (existUser.service.toString() != existServiceInUserProfile._id.toString()) {
+            if (existUser.service != existServiceInUserProfile._id) {
                 return res.status(400).json({
                     status: false,
                     message: `You can't post work for this service because you've created a ${existServiceInUserProfile.name} service account.`

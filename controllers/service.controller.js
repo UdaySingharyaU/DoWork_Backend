@@ -41,7 +41,6 @@ const serviceController = {
         }
     },
 
-
     getServiceById: async (req, res) => {
         try {
             if (!mongoose.Types.ObjectId.isValid(req.params.id)) {

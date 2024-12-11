@@ -17,9 +17,9 @@ import mongoose from "mongoose";
 import axios from 'axios';
 import { error } from "console";
 
-const executePython = async (script, args = []) => {
-    const argument = args.map(arg => arg.toString());
-    const py = spawn("python", [script, ...argument]);
+const executePython = async (script) => {
+    // const argument = args.map(arg => arg.toString());
+    const py = spawn("python", [script]);
     const result = await new Promise((resolve, reject) => {
         let output = '';
         py.stdout.on('data', (data) => {
@@ -338,6 +338,7 @@ const userController = {
 
     logout: async (req, res) => {
         try {
+            console.log("first");
             res.clearCookie('jwt');
             return res.status(200).json({
                 status: 'success',
@@ -688,7 +689,7 @@ const userController = {
     },
     runFaceRecognition: async (req, res) => {
         try {
-            const result = await executePython('recognize_face.py', []);
+            const result = await executePython('recognize_face.py');
             return res.status(200).json({
                 status: true,
                 message: `Python Code ${result}`
