@@ -33,12 +33,12 @@ const serviceController = {
             console.log("existUser.service ",existUser.service );
             console.log("existServiceInUserProfile._id",existServiceInUserProfile._id);
             // Check if the user can post for this service
-            if (existUser.service != existServiceInUserProfile._id) {
+            if (existUser.service.toString() !== existServiceInUserProfile._id.toString()) {
                 return res.status(400).json({
                     status: false,
                     message: `You can't post work for this service because you are not registered by ${service} service account.`
                 });
-            }
+            }            
 
             const existCategory = await categoryService.categoryByName(category);
             if (!existCategory) {
