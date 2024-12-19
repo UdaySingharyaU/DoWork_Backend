@@ -6,8 +6,8 @@ import WorkPost from "../models/workPost.model.js";
 import notificationService from "../service/notification.service.js";
 import Category from "../models/categorymodel.js";
 import categoryService from "../service/category.service.js";
-
-
+import NodeCache from "node-cache";
+const cache = new NodeCache({ stdTTL: 43200 });//12hr * 60 * 60sec
 const serviceController = {
     postWorkByWorker: async (req, res) => {
         try {
@@ -149,7 +149,16 @@ const serviceController = {
 
     getAllPost: async (req, res) => {
         try {
+            const cachedPosts = cache.get('posts');
+            if(cachedPosts){
+                console.log("chaching")
+                return res.status(200).json({
+                    status:true,
+                    data:cachedPosts
+                })
+            }
             const post = await WorkPost.find().populate('user');
+            cache.set("posts",post);
             return res.status(200).json({
                 status: true,
                 data: post
