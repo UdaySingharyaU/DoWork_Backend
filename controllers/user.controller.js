@@ -17,18 +17,9 @@ import mongoose from "mongoose";
 import axios from 'axios';
 import { error } from "console";
 
-<<<<<<< HEAD
-
-// Function to execute Python script
-const executePython = async (script, args = []) => {
-    const argument = args.map(arg => arg.toString()); // Ensure all arguments are strings
-    const py = spawn("python", [script, ...argument]);
-
-=======
 const executePython = async (script) => {
     // const argument = args.map(arg => arg.toString());
     const py = spawn("python", [script]);
->>>>>>> da3e48789d6841e628af44c7e45370a09ef2ea51
     const result = await new Promise((resolve, reject) => {
         let output = ''; // Store Python output
 
@@ -533,10 +524,6 @@ const userController = {
         }
     },
 
-<<<<<<< HEAD
-
-=======
->>>>>>> da3e48789d6841e628af44c7e45370a09ef2ea51
     updateProfileById: async (req, res) => {
         const { ...updateData } = req.body;
         const updatedUser = await User.findByIdAndUpdate(req.currentUser.id, updateData, { new: true });
@@ -645,26 +632,6 @@ const userController = {
             });
         }
     },
-<<<<<<< HEAD
-
-
-
-    // Route handler to run face recognition
-    runFaceRecognition: async (req, res) => {
-        try {
-            const result = await executePython('recognize_face.py', []);
-
-            return res.status(200).json({
-                status: true,
-                message: `Python Code Output: ${result}`
-            });
-        } catch (error) {  // Ensure 'error' matches in catch block
-            console.error("Error during face recognition:", error);
-
-            return res.status(500).json({ // Ensure correct error handling
-                status: false,
-                error: error
-=======
 
     getUserAddress: async (req, res) => {
         try {
@@ -733,7 +700,6 @@ const userController = {
             return res.status(error.statusCode || 500).json({
                 status: false,
                 error: error.message
->>>>>>> da3e48789d6841e628af44c7e45370a09ef2ea51
             });
         }
     }

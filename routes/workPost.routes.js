@@ -20,7 +20,6 @@ router.get('/getPostById/:id',authMiddleware.auth,workPost.getPostById);
 
 router.get('/getAllPostByToken',authMiddleware.auth,workPost.getAllPostByToken);
 
-
 router.patch('/changeStatusOfAvalabilityByWorker/:id',authMiddleware.auth,workPost.changeStatusOfAvalabilityByWorker);
 
 export default router;

@@ -29,11 +29,14 @@ const serviceController = {
                     message: "Service Not Exist With This Name"
                 });
             }
+            console.log(existUser)
+            console.log("existUser.service ",existUser.service );
+            console.log("existServiceInUserProfile._id",existServiceInUserProfile._id);
             // Check if the user can post for this service
             if (existUser.service != existServiceInUserProfile._id) {
                 return res.status(400).json({
                     status: false,
-                    message: `You can't post work for this service because you've created a ${existServiceInUserProfile.name} service account.`
+                    message: `You can't post work for this service because you are not registered by ${service} service account.`
                 });
             }
 
