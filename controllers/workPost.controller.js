@@ -30,15 +30,15 @@ const serviceController = {
                 });
             }
             console.log(existUser)
-            console.log("existUser.service ",existUser.service );
-            console.log("existServiceInUserProfile._id",existServiceInUserProfile._id);
+            console.log("existUser.service ", existUser.service);
+            console.log("existServiceInUserProfile._id", existServiceInUserProfile._id);
             // Check if the user can post for this service
             if (existUser.service.toString() !== existServiceInUserProfile._id.toString()) {
                 return res.status(400).json({
                     status: false,
                     message: `You can't post work for this service because you are not registered by ${service} service account.`
                 });
-            }            
+            }
 
             const existCategory = await categoryService.categoryByName(category);
             if (!existCategory) {
@@ -47,10 +47,10 @@ const serviceController = {
                     message: "Category Not Exist"
                 });
             }
-            if(!existServiceInUserProfile.categories.includes(existCategory._id)){
+            if (!existServiceInUserProfile.categories.includes(existCategory._id)) {
                 return res.status(400).json({
-                    status:false,
-                    message:`Category not belog to the ${existServiceInUserProfile.name} service`
+                    status: false,
+                    message: `Category not belog to the ${existServiceInUserProfile.name} service`
                 })
             }
             // Create a new work post
@@ -150,18 +150,23 @@ const serviceController = {
     getAllPost: async (req, res) => {
         try {
             const cachedPosts = cache.get('posts');
-            if(cachedPosts){
-                console.log("chaching")
+            if (cachedPosts) {
+                console.log("chaching",cachedPosts.length)
                 return res.status(200).json({
-                    status:true,
-                    data:cachedPosts
+                    status: true,
+                    data: cachedPosts
                 })
             }
-            const post = await WorkPost.find().populate('user');
-            cache.set("posts",post);
+            const posts = await WorkPost.find().populate('user');
+
+            // Convert Mongoose documents to plain objects
+            const plainPosts = posts.map(post => post.toObject());
+console.log(plainPosts.length)
+            // Cache the plain objects
+            cache.set('posts', plainPosts);
             return res.status(200).json({
                 status: true,
-                data: post
+                data: posts
             });
         } catch (error) {
             return res.status(error.statusCode || 500).json({
@@ -171,10 +176,10 @@ const serviceController = {
         }
     },
 
-    getAllPostByToken:async(req,res)=>{
+    getAllPostByToken: async (req, res) => {
         try {
-            console.log("req.curectUser",req.currentUser);
-            const post = await WorkPost.find({user:req.currentUser.id}).populate('user');
+            console.log("req.curectUser", req.currentUser);
+            const post = await WorkPost.find({ user: req.currentUser.id }).populate('user');
             return res.status(200).json({
                 status: true,
                 data: post
@@ -187,7 +192,7 @@ const serviceController = {
         }
     },
 
-    getPostById:async(req,res)=>{
+    getPostById: async (req, res) => {
         try {
             const post = await WorkPost.findById(req.params.id).populate('user');
             return res.status(200).json({
@@ -203,7 +208,7 @@ const serviceController = {
     },
     findWorkerByPost: async (req, res) => {
         try {
-            const post = await WorkPost.find({status:'AVAILABLE'}).populate('user');
+            const post = await WorkPost.find({ status: 'AVAILABLE' }).populate('user');
             return res.status(200).json({
                 status: true,
                 data: post
@@ -218,11 +223,11 @@ const serviceController = {
     changeStatusOfAvalabilityByWorker: async (req, res) => {
         try {
             const { status } = req.body;
-            const statusEnum =['AVAILABLE', 'NOTAVAILABLE'];
-            if(!statusEnum.includes(status)){
+            const statusEnum = ['AVAILABLE', 'NOTAVAILABLE'];
+            if (!statusEnum.includes(status)) {
                 return res.status(400).json({
-                    status:false,
-                    message:"Status Enum is Not Correct",
+                    status: false,
+                    message: "Status Enum is Not Correct",
                 })
             }
             const post = await WorkPost.findByid({ _id: req.params.id })
