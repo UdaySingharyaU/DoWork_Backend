@@ -151,9 +151,10 @@ const serviceController = {
         try {
             const cachedPosts = cache.get('posts');
             if (cachedPosts) {
-                console.log("chaching",cachedPosts.length)
+                console.log("chaching", cachedPosts.length)
                 return res.status(200).json({
                     status: true,
+                    totalPosts:cachedPosts.length,
                     data: cachedPosts
                 })
             }
@@ -161,11 +162,12 @@ const serviceController = {
 
             // Convert Mongoose documents to plain objects
             const plainPosts = posts.map(post => post.toObject());
-console.log(plainPosts.length)
+            console.log(plainPosts.length)
             // Cache the plain objects
             cache.set('posts', plainPosts);
             return res.status(200).json({
                 status: true,
+                totalPosts:posts.length,
                 data: posts
             });
         } catch (error) {
