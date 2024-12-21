@@ -54,6 +54,7 @@ const workPostSchema = new mongoose.Schema({
     }
 )
 
+// workPostSchema.index({ userType: "text", description: "text", service: "text", category: "text" });
 
 
 const WorkPost = mongoose.model('WorkPost', workPostSchema);

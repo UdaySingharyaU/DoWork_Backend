@@ -22,4 +22,6 @@ router.get('/getAllPostByToken',authMiddleware.auth,workPost.getAllPostByToken);
 
 router.patch('/changeStatusOfAvalabilityByWorker/:id',authMiddleware.auth,workPost.changeStatusOfAvalabilityByWorker);
 
+router.get('/searchByName',workPost.searchByName);
+
 export default router;
