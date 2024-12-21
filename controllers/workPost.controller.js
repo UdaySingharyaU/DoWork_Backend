@@ -149,26 +149,27 @@ const serviceController = {
 
     getAllPost: async (req, res) => {
         try {
-            const cachedPosts = cache.get('posts');
-            // cache.flushAll();
-            if (cachedPosts) {
-                console.log("chaching", cachedPosts.length)
-                return res.status(200).json({
-                    status: true,
-                    totalPosts:cachedPosts.length,
-                    data: cachedPosts
-                })
+            const { searchQuery } = req.query;
+    
+            let posts;
+            // Create the $or condition dynamically
+            if (searchQuery) {
+                console.log("running");
+                const fieldsToSearch = ["userType", "description", "service", "category"];
+                const searchConditions = fieldsToSearch.map(field => ({
+                    [field]: { $regex: searchQuery, $options: "i" } // Case-insensitive partial match
+                }));
+    
+                // Use $or to combine conditions and search the database
+                posts = await WorkPost.find({ $or: searchConditions }).populate('user');
+            } else {
+                // Fetch posts from MongoDB if no searchQuery
+                posts = await WorkPost.find().populate('user');
             }
-            const posts = await WorkPost.find().populate('user');
-
-            // Convert Mongoose documents to plain objects
-            const plainPosts = posts.map(post => post.toObject());
-            console.log(plainPosts.length)
-            // Cache the plain objects
-            cache.set('posts', plainPosts);
+    
             return res.status(200).json({
                 status: true,
-                totalPosts:posts.length,
+                totalPosts: posts.length, // Use posts instead of plainPosts
                 data: posts
             });
         } catch (error) {
@@ -178,6 +179,8 @@ const serviceController = {
             });
         }
     },
+    
+    
 
     getAllPostByToken: async (req, res) => {
         try {
@@ -251,17 +254,17 @@ const serviceController = {
         }
     },
 
-    searchByName:async(req,res)=>{
+    searchByName: async (req, res) => {
         try {
             const { searchQuery } = req.query;
-    
+
             if (!searchQuery) {
                 return res.status(400).json({ message: "Search query is required" });
             }
-    
+
             // Define the keys to search in
             const fieldsToSearch = ["userType", "description", "service", "category"];
-    
+
             // Create the $or condition dynamically
             const searchConditions = fieldsToSearch.map(field => ({
                 [field]: { $regex: searchQuery, $options: "i" } // Case-insensitive partial match
@@ -269,11 +272,11 @@ const serviceController = {
             console.log(searchConditions)
             // Perform the query
             const results = await WorkPost.find({ $or: searchConditions });
-    
+
             if (results.length === 0) {
                 return res.status(404).json({ message: "No results found" });
             }
-    
+
             return res.status(200).json({ success: true, data: results });
         } catch (err) {
             console.error("Error in searchByName:", err);
